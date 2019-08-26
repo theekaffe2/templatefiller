@@ -58,8 +58,7 @@ filename=$(basename "$1")
 echo "Uploading contactsheets: $filename"
 
 response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
-thumblink+=($(echo "$response" | jq -r '.image.file.resource.chain.image'))
-echo ${thumblink[0]}
+thumblink+=("$(echo "$response" | jq -r '.image.file.resource.chain.image')")
 }
 
 imageupmedium ()
