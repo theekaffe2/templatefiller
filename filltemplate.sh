@@ -98,19 +98,19 @@ if [ "$nooflinks" -gt 0 ]; then
 for ((n=1;n<=nooflinks;n++)); do
 if [ -f "$templatelocation" ]; then
 	echo "Populating the template, and making new file called $n.txt"
-	awk -v TABLEIMAGES="$final" -v CONTACTSHEET="${vcslink[$n]}" '{sub(/TABLEIMAGES/, TABLEIMAGES); sub(/CONTACTSHEET/, CONTACTSHEET); print}' "$templatelocation" > "$n.txt"
+	awk -v TABLEIMAGES="$final" -v CONTACTSHEET="${vcslink[$n]}" '{sub(/TABLEIMAGES/, TABLEIMAGES); sub(/CONTACTSHEET/, CONTACTSHEET); print}' "$templatelocation" > "$Output$n.txt"
 	else
-	echo "No template. Writing the template to $n.txt"
-	echo "$final" > "$n.txt"
+	echo "No template. Writing the Output to $n.txt"
+	echo "$final" > "$Output$n.txt"
 fi
 done
 else
 if [ -f "$templatelocation" ]; then
 	echo "Populating the template, and making new file called 1.txt"
-	awk -v TABLEIMAGES="$final" '{sub(/TABLEIMAGES/, TABLEIMAGES); print}' "$templatelocation" > "1.txt"
+	awk -v TABLEIMAGES="$final" '{sub(/TABLEIMAGES/, TABLEIMAGES); print}' "$templatelocation" > "$Output""1.txt"
 	else
-	echo "No template. Writing the template to 1.txt"
-	echo "$final" > "$n.txt"
+	echo "No template. Writing the Output to 1.txt"
+	echo "$final" > "$Output""1.txt"
 fi
 fi
 exit 0
