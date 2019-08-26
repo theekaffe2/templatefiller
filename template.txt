@@ -1,0 +1,27 @@
+[bg=https://jerking.empornium.ph/images/2019/07/28/dark_spot_background_texture_50611_1920x1080.jpg]
+[align=center]
+[br]
+[img]https://jerking.empornium.ph/images/2019/07/28/coollogo_com-24302109.png[/img]
+[font=Comic Sans MS][size=5][color=#FFFF99]SCENE NAME[/color][/size][/font]
+[br]
+[hr]
+[imgnm]SCENE PICTURE[/imgnm]
+[br]
+[plot]
+
+[br]
+[size=3][font=Comic Sans MS][color=#FFFF99][/color][/font][/size]
+
+[details]
+
+[size=3][font=Comic Sans MS][color=#FFFF99][/color][/font][/size]
+
+[screens]
+
+TABLEIMAGES
+
+
+[size=2][spoiler=Screens][img]ContactSheet[/img][/spoiler][/size]
+[br]
+[/align]
+[/bg]
