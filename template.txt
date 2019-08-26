@@ -21,7 +21,7 @@
 TABLEIMAGES
 
 
-[size=2][spoiler=Screens][img]ContactSheet[/img][/spoiler][/size]
+[size=2][spoiler=Screens][img]CONTACTSHEET[/img][/spoiler][/size]
 [br]
 [/align]
 [/bg]
