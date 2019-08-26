@@ -5,8 +5,10 @@ folderwithimages=""
 templatelocation=""
 Output=""
 
-imageregex='.+\.(png|PNG|JPG|jpg|gif|GIF)'
-videoregex='.+\.(mp4|MP4|mov|MOV|mkv|MKV)'
+imageregex='.+\.(png|PNG|JPG|jpg|gif|GIF)$'
+thumbregex='.+\_s.(png|PNG|JPG|jpg|gif|GIF)$'
+posterregex='.*(poster|Poster|POSTER).*.(png|PNG|JPG|jpg|gif|GIF)$'
+videoregex='.+\.(mp4|MP4|mov|MOV|mkv|MKV)$'
 Scriptfolder="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ -z "$templatelocation" ]; then
@@ -41,37 +43,47 @@ else
 	exit 1
 fi
 
-imageup ()
+imageupposter ()
+{
+filename=$(basename "$1")
+echo "Uploading poster: $filename"
+
+response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
+posterlink=$(echo "$response" | jq -r '.image.file.resource.chain.image')2
+}
+
+imageupthumb ()
+{
+filename=$(basename "$1")
+echo "Uploading contactsheets: $filename"
+
+response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
+thumblink+=($(echo "$response" | jq -r '.image.file.resource.chain.image'))
+echo ${thumblink[0]}
+}
+
+imageupmedium ()
 {
 filename=$(basename "$1")
 echo "Uploading $filename"
-response=$(cat /tmp/jerktest.html )
-#response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
+
+response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
 mediumlink='[url='$(echo "$response" | jq -r .image.url_viewer)'][img]'$(echo "$response" | jq -r '.image.file.resource.chain | .medium // .image' )'[/img][/url]'
 links+=("$mediumlink")
-}
-makethumbs ()
-{
-filename=$(basename "$1")
-endlocaton="$Output$filename.jpg"
-echo "Making thumbs and uploading thumbs for $filename"
-#if [ ! -f "$endlocaton".jpg ]; then vcs -q -n 21 -o "$endlocaton".jpg "$1" &> /dev/null; fi
-response=$(cat /tmp/jerktest.html)
-#response=$(bash "$Scriptfolder/jerkuploader.sh" "$endlocaton".jpg)
-vcslink+=($(echo "$response" | jq -r .image.file.resource.chain.image))
 }
 
 
 for file in "$folderwithimages"*; do
-	if [[ "$file" =~ $imageregex ]]; then
-		imageup "$file"
-	elif [[ "$file" =~ $videoregex ]] && command -v vcs &>/dev/null; then
-		makethumbs "$file"
+	if [[ "$file" =~ $thumbregex ]]; then
+		imageupthumb "$file"
+	elif [[ "$file" =~ $posterregex ]]; then
+		imageupposter "$file"
+	elif [[ "$file" =~ $imageregex ]]; then
+		imageupmedium "$file"
 	fi
 done
+
 nooflinks="${#links[@]}"
-
-
 if [ "$nooflinks" -gt 0 ]; then
 for ((n=0;n<nooflinks;n++)); do
 	if (( n%2==0 )); then
@@ -92,13 +104,13 @@ final='[table=center,50%,nball]
 [/table]'
 fi
 
-nooflinks="${#vcslink[@]}"
+nooflinks="${#thumblink[@]}"
 
 if [ "$nooflinks" -gt 0 ]; then
-for ((n=1;n<=nooflinks;n++)); do
+for ((n=0;n<=nooflinks;n++)); do
 if [ -f "$templatelocation" ]; then
 	echo "Populating the template, and making new file called $n.txt"
-	awk -v TABLEIMAGES="$final" -v CONTACTSHEET="${vcslink[$n]}" '{sub(/TABLEIMAGES/, TABLEIMAGES); sub(/CONTACTSHEET/, CONTACTSHEET); print}' "$templatelocation" > "$Output$n.txt"
+	awk -v TABLEIMAGES="$final" -v CONTACTSHEET="${thumblink[$n]}" -v SCENEPICTURE="$posterlink" '{sub(/TABLEIMAGES/, TABLEIMAGES); sub(/CONTACTSHEET/, CONTACTSHEET); sub(/SCENEPICTURE/, SCENEPICTURE); print}' "$templatelocation" > "$Output$n.txt"
 	else
 	echo "No template. Writing the Output to $n.txt"
 	echo "$final" > "$Output$n.txt"
@@ -107,7 +119,7 @@ done
 else
 if [ -f "$templatelocation" ]; then
 	echo "Populating the template, and making new file called 1.txt"
-	awk -v TABLEIMAGES="$final" '{sub(/TABLEIMAGES/, TABLEIMAGES); print}' "$templatelocation" > "$Output""1.txt"
+	awk -v TABLEIMAGES="$final" SCENEPICTURE="$posterlink" '{sub(/TABLEIMAGES/, TABLEIMAGES); sub(/SCENEPICTURE/, SCENEPICTURE); print}' "$templatelocation" > "$Output""1.txt"
 	else
 	echo "No template. Writing the Output to 1.txt"
 	echo "$final" > "$Output""1.txt"

@@ -5,7 +5,7 @@
 [font=Comic Sans MS][size=5][color=#FFFF99]SCENE NAME[/color][/size][/font]
 [br]
 [hr]
-[imgnm]SCENE PICTURE[/imgnm]
+[imgnm]SCENEPICTURE[/imgnm]
 [br]
 [plot]
 
