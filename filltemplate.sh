@@ -1,24 +1,43 @@
 #!/bin/bash
 #set -v -x
+set -e
 folderwithimages=""
 templatelocation=""
+Output=""
+
 imageregex='.+\.(png|PNG|JPG|jpg|gif|GIF)'
 videoregex='.+\.(mp4|MP4|mov|MOV|mkv|MKV)'
 Scriptfolder="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-if [ "$#" -ne 0 ]; then
-	>&2 echo -e "Usage is: $0"
+if [ -z "$templatelocation" ]; then
+	templatelocation="$Scriptfolder/template.txt"
+fi
+
+if [ "$#" -gt 1 ]; then
+	>&2 echo -e "Usage is: $0 (Folder)"
 	>&2 echo "Image folder is currrently set to $folderwithimages"
 	>&2 echo "Template is set to $templatelocation"
 	exit 1
 fi
 
-if [ -d "$folderwithimages" ]; then
-	if [ ! "${folderwithimages: -1}" == "/" ]; then 
+if [ "$1" ]; then
+	folderwithimages="$1"
+fi
+
+if [ -d "$folderwithimages" ] || [ -z "$folderwithimages" ]; then
+	if [ -d "$folderwithimages" ] && [ ! "${folderwithimages: -1}" == "/" ]; then 
 		folderwithimages="$folderwithimages/"
 	fi
 else
-	echo "Coudln't identify as a directory: $folderwithimages"
+	echo "Couldn't identify input as a directory: $folderwithimages"
+	exit 1
+fi
+if [ -d "$Output" ] || [ -z "$Output" ]; then
+	if [ -d "$Output" ] && [ ! "${Output: -1}" == "/" ]; then 
+		Output="$Output/"
+	fi
+else
+	echo "Couldn't identify output as a directory: $Output"
 	exit 1
 fi
 
@@ -27,15 +46,18 @@ imageup ()
 filename=$(basename "$1")
 echo "Uploading $filename"
 response=$(cat /tmp/jerktest.html )
+#response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
 mediumlink='[url='$(echo "$response" | jq -r .image.url_viewer)'][img]'$(echo "$response" | jq -r '.image.file.resource.chain | .medium // .image' )'[/img][/url]'
 links+=("$mediumlink")
 }
 makethumbs ()
 {
 filename=$(basename "$1")
+endlocaton="$Output$filename.jpg"
 echo "Making thumbs and uploading thumbs for $filename"
-if [ ! -f "$filename".jpg ]; then vcs -q -n 21 -o "$filename".jpg "$1" &> /dev/null; fi
-response=$(bash "$Scriptfolder/jerkuploader.sh" "$filename".jpg)
+#if [ ! -f "$endlocaton".jpg ]; then vcs -q -n 21 -o "$endlocaton".jpg "$1" &> /dev/null; fi
+response=$(cat /tmp/jerktest.html)
+#response=$(bash "$Scriptfolder/jerkuploader.sh" "$endlocaton".jpg)
 vcslink+=($(echo "$response" | jq -r .image.file.resource.chain.image))
 }
 
