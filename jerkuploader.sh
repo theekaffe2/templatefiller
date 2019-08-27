@@ -8,6 +8,11 @@ if [ "$#" -ne 1 ]; then
 	exit 1
 fi
 
+if which jq &> /dev/null; then
+	jq="jq"
+	else
+	jq="/home/zaktrosh/jq"
+fi
 
 #Either use existing cookie with login, or make a new one
 if [ -f "$jerkcookie" ]; then
@@ -66,7 +71,7 @@ if [ "$OldFile" ]; then mv "$File" "$OldFile"; fi
 
 ## Check response
 if grep -q \"code\":200 /tmp/jerktest.html; then
-	link=$(cat /tmp/jerktest.html | jq -r '.')
+	link=$(cat /tmp/jerktest.html | $jq -r '.')
 	echo "$link"
 elif grep -q "413 Request Entity" /tmp/jerktest.html; then
 	>&2 echo "Jerking threw an error."
@@ -75,7 +80,7 @@ elif grep -q "413 Request Entity" /tmp/jerktest.html; then
 	exit 1
 else
 	>&2 echo "Jerking threw an error."
-	>&2 jq -r '.' /tmp/jerktest.html
+	>&2 $jq -r '.' /tmp/jerktest.html
 	exit 1
 fi
 exit 0

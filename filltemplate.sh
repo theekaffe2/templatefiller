@@ -2,7 +2,11 @@
 #set -v -x
 set -e
 
-
+if which jq &> /dev/null; then
+	jq="jq"
+	else
+	jq="/home/zaktrosh/jq"
+fi
 
 folderwithimages=""
 
@@ -54,7 +58,7 @@ filename=$(basename "$1")
 echo "Uploading poster: $filename"
 
 response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
-posterlink=$(echo "$response" | jq -r '.image.file.resource.chain.image')
+posterlink=$(echo "$response" | $jq -r '.image.file.resource.chain.image')
 }
 
 imageupthumb ()
@@ -63,7 +67,7 @@ filename=$(basename "$1")
 echo "Uploading contactsheets: $filename"
 
 response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
-thumblink+=("$(echo "$response" | jq -r '.image.file.resource.chain.image')")
+thumblink+=("$(echo "$response" | $jq -r '.image.file.resource.chain.image')")
 }
 
 imageupmedium ()
@@ -72,7 +76,7 @@ filename=$(basename "$1")
 echo "Uploading $filename"
 
 response=$(bash "$Scriptfolder/jerkuploader.sh" "$1")
-mediumlink='[url='$(echo "$response" | jq -r .image.url_viewer)'][img]'$(echo "$response" | jq -r '.image.file.resource.chain | .medium // .image' )'[/img][/url]'
+mediumlink='[url='$(echo "$response" | $jq -r .image.url_viewer)'][img]'$(echo "$response" | $jq -r '.image.file.resource.chain | .medium // .image' )'[/img][/url]'
 links+=("$mediumlink")
 }
 
@@ -86,7 +90,7 @@ if [ "$1" ]; then
 	if [ ! "$covergif" == "Error" ]; then
 		
 		response=$(bash "$Scriptfolder/jerkuploader.sh" "$covergif")
-		covergif=$(echo "$response" | jq -r '.image.file.resource.chain.image')
+		covergif=$(echo "$response" | $jq -r '.image.file.resource.chain.image')
 	fi
 fi
 
