@@ -68,6 +68,11 @@ if [ "$OldFile" ]; then mv "$File" "$OldFile"; fi
 if grep -q \"code\":200 /tmp/jerktest.html; then
 	link=$(cat /tmp/jerktest.html | jq -r '.')
 	echo "$link"
+elif grep -q "413 Request Entity" /tmp/jerktest.html; then
+	>&2 echo "Jerking threw an error."
+	>&2 echo "Size of image is problem."
+	>&2 cat /tmp/jerktest.html
+	exit 1
 else
 	>&2 echo "Jerking threw an error."
 	>&2 jq -r '.' /tmp/jerktest.html

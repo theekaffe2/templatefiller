@@ -1,3 +1,4 @@
+COVERIMAGE
 [bg=https://jerking.empornium.ph/images/2019/07/28/dark_spot_background_texture_50611_1920x1080.jpg]
 [align=center]
 [br]
