@@ -22,6 +22,7 @@ posterregex='.*(poster|Poster|POSTER).*.(png|PNG|JPG|jpg|gif|GIF)$'
 videoregex='.+\.(mp4|MP4|mov|MOV|mkv|MKV)$'
 Scriptfolder="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+
 if [ -z "$templatelocation" ]; then
 	templatelocation="$Scriptfolder/template.txt"
 fi
